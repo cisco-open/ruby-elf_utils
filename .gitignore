@@ -1,0 +1,17 @@
+lib/elf_utils/elf_utils.so
+Gemfile.lock
+
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+.cache
+*.bundle
+ext/*/Makefile
+
+# rspec failure tracking
+.rspec_status
