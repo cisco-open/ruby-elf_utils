@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/gem/v/elf_utils.svg)](https://rubygems.org/gems/elf_utils)
 [![GitHub](https://img.shields.io/badge/github-elf__utils-blue.svg)](http://github.com/cisco-open/ruby-elf_utils)
-[![Documentation](https://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://rubydoc.org/gems/ruby-elf_utils/frames)
+[![Documentation](https://img.shields.io/badge/docs-rdoc.info-blue.svg)](https://rubydoc.info/gems/elf_utils/frames)
 
 [![Contributor-Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-fbab2c.svg)](CODE_OF_CONDUCT.md)
 [![Maintainer](https://img.shields.io/badge/Maintainer-Cisco-00bceb.svg)](https://opensource.cisco.com)
