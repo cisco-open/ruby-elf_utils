@@ -137,15 +137,28 @@ module ElfUtils
       @attrs ||= parse_attrs
 
       raise "not a subrange DIE: %p" % [self] unless @tag == :subrange_type
-      return @attrs[:count] if @attrs.has_key?(:count)
+      count = @attrs[:count]
+      case count
+      when Integer
+        return count
+      when Section::DebugInfo::Die
+        # return a size of nil for variable-length array
+        return nil if count.tag == :variable
+        raise ElfUtils::Error, "unexpected DIE type in subrange[:count]: %p" %
+          [count] 
+      when nil
+        # fall through when there is no count attribute
+      else
+        raise ElfUtils::Error, "unexpected value in subrange[:count]: %p" %
+          [count]
+      end
 
       # upper bound may be DW_TAG_variable, so special handling
       if (upper_bound = @attrs[:upper_bound])
         return @attrs[:upper_bound] + 1 if upper_bound.is_a?(Integer)
       end
 
-      # XXX we'll need to do some work to support flexible array members, or
-      # arrays with an upper bound defined by DW_TAG_variable
+      # XXX we'll need to do some work to support flexible array members
       0
     end
 
@@ -173,12 +186,19 @@ module ElfUtils
         when :const_type
           "const #{@attrs[:type]&.type_name || "void"}"
         when :array_type
-          sizes = children
-            .inject("") do |buf, child|
-              buf << "[%d]" % child.subrange_len if child.tag == :subrange_type
-              buf
+          buf = "#{@attrs[:type]&.type_name}"
+          sizes = children.each do |child|
+              next unless child.tag == :subrange_type
+
+              # subrange_len may return nil for variable-length arrays
+              len = child.subrange_len
+              if len
+                buf << "[%d]" % len
+              else
+                buf << "[]"
+              end
             end
-          "#{@attrs[:type].type_name}#{sizes}"
+          buf
         when :pointer_type
           inner = @attrs[:type]&.type_name || "void"
           if inner.end_with?("*")
@@ -221,8 +241,10 @@ module ElfUtils
       when :pointer_type, :subroutine_type
         @cu.addr_type
       when :array_type
+        # subrange_len may return nil for variable-length arrays
         sizes = children
-          .filter_map { |c| c.subrange_len if c.tag == :subrange_type }
+          .select { |c| c.tag == :subrange_type }
+          .map { |c| c.subrange_len }
 
         # if we have a signed char array, we'll use a string to hold it
         inner_type = @attrs[:type].ctype
@@ -232,7 +254,7 @@ module ElfUtils
           inner_type = CTypes::String.new(size: sizes.pop)
         end
 
-        while (size = sizes.pop)
+        sizes.reverse_each do |size|
           inner_type = CTypes::Array.new(type: inner_type, size:)
         end
 

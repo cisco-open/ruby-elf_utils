@@ -21,6 +21,14 @@ fib(unsigned i) {
     return fib(i - 1) + fib(i - 2);
 }
 
+void
+variable_length_array(unsigned n) {
+    unsigned array_variable_length[n];
+    for (int i = 0; i < n; i++) {
+        array_variable_length[i] = fib(i);
+    }
+}
+
 int
 main(int argc, char *argv[]) {
     return fib(10);

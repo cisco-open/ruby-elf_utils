@@ -18,7 +18,7 @@ module ElfUtils
           |
             (?<tag_offset>0x\h+):\s+DW_TAG_(?<tag>\w+)
           |
-            \s+DW_AT_(?<attr_name>\w+)\s+\((?<attr_value>.*?)\)
+            \s+DW_AT_(?<attr_name>\w+)\s+\((?<attr_value>.*?)(:?\)|:)
           )
           }x
 

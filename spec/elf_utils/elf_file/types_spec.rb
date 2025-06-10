@@ -141,6 +141,15 @@ module ElfUtils
             expect(elf_file.type(name)).to eq(type)
           end
         end
+
+        it "handles variable length array DIEs" do
+          var_die = elf_file
+            .debug_info
+            .dies
+            .find { |d| d[:name] == "array_variable_length" }
+          type_die = var_die[:type]
+          expect(type_die.ctype).to eq(CTypes.array(uint32))
+        end
       end
     end
   end
