@@ -88,11 +88,12 @@ module ElfUtils
       return nil unless type == :object && (debug_info = @file.debug_info)
 
       name = self.name
-      addr = self.addr
+      # use st_value because #addr may be relocated
+      location = @sym.st_value
       die = debug_info.dies(top: true).find do |die|
         die.tag == :variable &&
           die[:name] == name &&
-          die.location == addr
+          die.location == location
       end or return nil
       die[:type]&.ctype
     end

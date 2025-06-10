@@ -63,6 +63,19 @@ module ElfUtils
           end
         end
       end
+
+      context_for_each_dwarf_filetype do |path, endian|
+        describe "regression: after relocation" do
+          it "will return the expected ctype" do
+            skip "no relocation support" if
+                dwarf_file.section(".rel.debug_info") ||
+                  dwarf_file.section(".rela.debug_info")
+            sym = dwarf_file.symbol("global_buf")
+            sym.section.relocate(0xf0000000)
+            expect(sym.ctype).to eq(CTypes.string(256))
+          end
+        end
+      end
     end
 
     describe "#source_location" do
