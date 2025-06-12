@@ -331,6 +331,10 @@ module ElfUtils
           offset = loc + type.size
         end
 
+        # if there's tail padding to fit a specific alignment, add it here
+        tail = self[:byte_size] - offset
+        struct.pad(tail) if tail > 0
+
         # ensure we include the bitfield if it was the last element
         struct.attribute(bitfield.build) if bitfield
 

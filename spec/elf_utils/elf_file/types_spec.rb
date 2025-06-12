@@ -101,6 +101,8 @@ module ElfUtils
               endian endian
               attribute :next, uintptr
               attribute :id, int32
+              # for 64-bit platforms, this struct gets padded
+              pad(4) if uintptr.size == 8
             }],
           ["struct with_unnamed_fields",
             struct {
@@ -113,6 +115,13 @@ module ElfUtils
               name "with_bitfield"
               endian endian
               attribute my_bitfield
+            }],
+          ["struct tail_padded",
+            struct {
+              name "tail_padded"
+              endian endian
+              attribute :a, uint8
+              pad(3)
             }],
 
           # unions

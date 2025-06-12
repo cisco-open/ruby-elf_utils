@@ -81,6 +81,12 @@ struct with_unnamed_fields {
 };
 struct with_unnamed_fields struct_with_unnamed_fields;
 
+/* force tail-padding on this struct to ensure we handle it properly */
+struct tail_padded {
+    unsigned char a;
+}__attribute__((aligned(4)));
+struct tail_padded struct_tail_padded[10];
+
 union simple {
     unsigned int id;
     unsigned char buf[32];
